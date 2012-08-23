@@ -49,6 +49,8 @@
 
 #include <math.h>
 
+#define TOL 1e-15 // old tol 0.0f
+
 namespace OpenMEEG {
 
     /* function prototype */
@@ -106,38 +108,38 @@ namespace OpenMEEG {
       SUB(v2,p1,q1)\
       CROSS(N1,v1,v2)\
       SUB(v1,q2,q1)\
-      if (DOT(v1,N1) > 0.0f) return 0;\
+      if (DOT(v1,N1) > TOL) return 0;\
       SUB(v1,p2,p1)\
       SUB(v2,r1,p1)\
       CROSS(N1,v1,v2)\
       SUB(v1,r2,p1) \
-      if (DOT(v1,N1) > 0.0f) return 0;\
+      if (DOT(v1,N1) > TOL) return 0;\
       else return 1; }
 
 
 
     // Permutation in a canonical form of T2's vertices
     #define TRI_TRI_3D(p1,q1,r1,p2,q2,r2,dp2,dq2,dr2) { \
-      if (dp2 > 0.0f) { \
-         if (dq2 > 0.0f) CHECK_MIN_MAX(p1,r1,q1,r2,p2,q2) \
-         else if (dr2 > 0.0f) CHECK_MIN_MAX(p1,r1,q1,q2,r2,p2)\
+      if (dp2 > TOL) { \
+         if (dq2 > TOL) CHECK_MIN_MAX(p1,r1,q1,r2,p2,q2) \
+         else if (dr2 > TOL) CHECK_MIN_MAX(p1,r1,q1,q2,r2,p2)\
          else CHECK_MIN_MAX(p1,q1,r1,p2,q2,r2) }\
-      else if (dp2 < 0.0f) { \
-        if (dq2 < 0.0f) CHECK_MIN_MAX(p1,q1,r1,r2,p2,q2)\
-        else if (dr2 < 0.0f) CHECK_MIN_MAX(p1,q1,r1,q2,r2,p2)\
+      else if (-dp2 > -TOL) { \
+        if (-dq2 > -TOL) CHECK_MIN_MAX(p1,q1,r1,r2,p2,q2)\
+        else if (-dr2 > -TOL) CHECK_MIN_MAX(p1,q1,r1,q2,r2,p2)\
         else CHECK_MIN_MAX(p1,r1,q1,p2,q2,r2)\
       } else { \
-        if (dq2 < 0.0f) { \
-          if (dr2 >= 0.0f)  CHECK_MIN_MAX(p1,r1,q1,q2,r2,p2)\
+        if (-dq2 > -TOL) { \
+          if (dr2 >= TOL)  CHECK_MIN_MAX(p1,r1,q1,q2,r2,p2)\
           else CHECK_MIN_MAX(p1,q1,r1,p2,q2,r2)\
         } \
-        else if (dq2 > 0.0f) { \
-          if (dr2 > 0.0f) CHECK_MIN_MAX(p1,r1,q1,p2,q2,r2)\
+        else if (dq2 > TOL) { \
+          if (dr2 > TOL) CHECK_MIN_MAX(p1,r1,q1,p2,q2,r2)\
           else  CHECK_MIN_MAX(p1,q1,r1,q2,r2,p2)\
         } \
         else  { \
-          if (dr2 > 0.0f) CHECK_MIN_MAX(p1,q1,r1,r2,p2,q2)\
-          else if (dr2 < 0.0f) CHECK_MIN_MAX(p1,r1,q1,r2,p2,q2)\
+          if (dr2 > TOL) CHECK_MIN_MAX(p1,q1,r1,r2,p2,q2)\
+          else if (-dr2 > -TOL) CHECK_MIN_MAX(p1,r1,q1,r2,p2,q2)\
           else return coplanar_tri_tri3d(p1,q1,r1,p2,q2,r2,N1,N2);\
          }}}
 
@@ -171,7 +173,7 @@ namespace OpenMEEG {
       SUB(v1,r1,r2)
       dr1 = DOT(v1,N2);
 
-      if (((dp1 * dq1) > 0.0f) && ((dp1 * dr1) > 0.0f))  return 0;
+      if (((dp1 * dq1) > TOL) && ((dp1 * dr1) > TOL))  return 0;
 
       // Compute distance signs  of p2, q2 and r2 to the plane of triangle(p1,q1,r1)
 
@@ -186,7 +188,7 @@ namespace OpenMEEG {
       SUB(v1,r2,r1)
       dr2 = DOT(v1,N1);
 
-      if (((dp2 * dq2) > 0.0f) && ((dp2 * dr2) > 0.0f)) return 0;
+      if (((dp2 * dq2) > TOL) && ((dp2 * dr2) > TOL)) return 0;
 
       // Permutation in a canonical form of T1's vertices
       if (dp1 > eps) {
@@ -285,13 +287,13 @@ namespace OpenMEEG {
       SUB(v2,r2,p1) \
       CROSS(N,v1,v2) \
       SUB(v,p2,p1) \
-      if (DOT(v,N) > 0.0f) {\
+      if (DOT(v,N) > TOL) {\
         SUB(v1,r1,p1) \
         CROSS(N,v1,v2) \
-        if (DOT(v,N) <= 0.0f) { \
+        if (DOT(v,N) <= TOL) { \
           SUB(v2,q2,p1) \
           CROSS(N,v1,v2) \
-          if (DOT(v,N) > 0.0f) { \
+          if (DOT(v,N) > TOL) { \
             SUB(v1,p1,p2) \
             SUB(v2,p1,r1) \
             alpha = DOT(v1,N2) / DOT(v2,N2); \
@@ -322,12 +324,12 @@ namespace OpenMEEG {
       } else { \
         SUB(v2,q2,p1) \
         CROSS(N,v1,v2) \
-        if (DOT(v,N) < 0.0f) { \
+        if (-DOT(v,N) < -TOL) { \
           return 0; \
         } else { \
           SUB(v1,r1,p1) \
           CROSS(N,v1,v2) \
-          if (DOT(v,N) >= 0.0f) { \
+          if (DOT(v,N) >= TOL) { \
             SUB(v1,p1,p2) \
             SUB(v2,p1,r1) \
             alpha = DOT(v1,N2) / DOT(v2,N2); \
@@ -356,26 +358,26 @@ namespace OpenMEEG {
 
 
     #define TRI_TRI_INTER_3D(p1,q1,r1,p2,q2,r2,dp2,dq2,dr2) { \
-      if (dp2 > 0.0f) { \
-         if (dq2 > 0.0f) CONSTRUCT_INTERSECTION(p1,r1,q1,r2,p2,q2) \
-         else if (dr2 > 0.0f) CONSTRUCT_INTERSECTION(p1,r1,q1,q2,r2,p2)\
+      if (dp2 > TOL) { \
+         if (dq2 > TOL) CONSTRUCT_INTERSECTION(p1,r1,q1,r2,p2,q2) \
+         else if (dr2 > TOL) CONSTRUCT_INTERSECTION(p1,r1,q1,q2,r2,p2)\
          else CONSTRUCT_INTERSECTION(p1,q1,r1,p2,q2,r2) }\
-      else if (dp2 < 0.0f) { \
-        if (dq2 < 0.0f) CONSTRUCT_INTERSECTION(p1,q1,r1,r2,p2,q2)\
-        else if (dr2 < 0.0f) CONSTRUCT_INTERSECTION(p1,q1,r1,q2,r2,p2)\
+      else if (-dp2 > -TOL) { \
+        if (-dq2 > -TOL) CONSTRUCT_INTERSECTION(p1,q1,r1,r2,p2,q2)\
+        else if (-dr2 > -TOL) CONSTRUCT_INTERSECTION(p1,q1,r1,q2,r2,p2)\
         else CONSTRUCT_INTERSECTION(p1,r1,q1,p2,q2,r2)\
       } else { \
-        if (dq2 < 0.0f) { \
-          if (dr2 >= 0.0f)  CONSTRUCT_INTERSECTION(p1,r1,q1,q2,r2,p2)\
+        if (-dq2 > -TOL) { \
+          if (dr2 >= TOL)  CONSTRUCT_INTERSECTION(p1,r1,q1,q2,r2,p2)\
           else CONSTRUCT_INTERSECTION(p1,q1,r1,p2,q2,r2)\
         } \
-        else if (dq2 > 0.0f) { \
-          if (dr2 > 0.0f) CONSTRUCT_INTERSECTION(p1,r1,q1,p2,q2,r2)\
+        else if (dq2 > TOL) { \
+          if (dr2 > TOL) CONSTRUCT_INTERSECTION(p1,r1,q1,p2,q2,r2)\
           else  CONSTRUCT_INTERSECTION(p1,q1,r1,q2,r2,p2)\
         } \
         else  { \
-          if (dr2 > 0.0f) CONSTRUCT_INTERSECTION(p1,q1,r1,r2,p2,q2)\
-          else if (dr2 < 0.0f) CONSTRUCT_INTERSECTION(p1,r1,q1,r2,p2,q2)\
+          if (dr2 > TOL) CONSTRUCT_INTERSECTION(p1,q1,r1,r2,p2,q2)\
+          else if (-dr2 > -TOL) CONSTRUCT_INTERSECTION(p1,r1,q1,r2,p2,q2)\
           else { \
             *coplanar = 1; \
             return coplanar_tri_tri3d(p1,q1,r1,p2,q2,r2,N1,N2);\
@@ -412,7 +414,7 @@ namespace OpenMEEG {
       SUB(v1,r1,r2)
       dr1 = DOT(v1,N2);
 
-      if (((dp1 * dq1) > 0.0f) && ((dp1 * dr1) > 0.0f))  return 0;
+      if (((dp1 * dq1) > TOL) && ((dp1 * dr1) > TOL))  return 0;
 
       // Compute distance signs  of p2, q2 and r2 to the plane of triangle(p1,q1,r1)
 
@@ -427,30 +429,30 @@ namespace OpenMEEG {
       SUB(v1,r2,r1)
       dr2 = DOT(v1,N1);
 
-      if (((dp2 * dq2) > 0.0f) && ((dp2 * dr2) > 0.0f)) return 0;
+      if (((dp2 * dq2) > TOL) && ((dp2 * dr2) > TOL)) return 0;
 
       // Permutation in a canonical form of T1's vertices
-      if (dp1 > 0.0f) {
-        if (dq1 > 0.0f) TRI_TRI_INTER_3D(r1,p1,q1,p2,r2,q2,dp2,dr2,dq2)
-        else if (dr1 > 0.0f) TRI_TRI_INTER_3D(q1,r1,p1,p2,r2,q2,dp2,dr2,dq2)
+      if (dp1 > TOL) {
+        if (dq1 > TOL) TRI_TRI_INTER_3D(r1,p1,q1,p2,r2,q2,dp2,dr2,dq2)
+        else if (dr1 > TOL) TRI_TRI_INTER_3D(q1,r1,p1,p2,r2,q2,dp2,dr2,dq2)
         else TRI_TRI_INTER_3D(p1,q1,r1,p2,q2,r2,dp2,dq2,dr2)
-      } else if (dp1 < 0.0f) {
-        if (dq1 < 0.0f) TRI_TRI_INTER_3D(r1,p1,q1,p2,q2,r2,dp2,dq2,dr2)
-        else if (dr1 < 0.0f) TRI_TRI_INTER_3D(q1,r1,p1,p2,q2,r2,dp2,dq2,dr2)
+      } else if (-dp1 > -TOL) {
+        if (-dq1 > -TOL) TRI_TRI_INTER_3D(r1,p1,q1,p2,q2,r2,dp2,dq2,dr2)
+        else if (-dr1 > -TOL) TRI_TRI_INTER_3D(q1,r1,p1,p2,q2,r2,dp2,dq2,dr2)
         else TRI_TRI_INTER_3D(p1,q1,r1,p2,r2,q2,dp2,dr2,dq2)
       } else {
-        if (dq1 < 0.0f) {
-          if (dr1 >= 0.0f) TRI_TRI_INTER_3D(q1,r1,p1,p2,r2,q2,dp2,dr2,dq2)
+        if (-dq1 > -TOL) {
+          if (dr1 >= TOL) TRI_TRI_INTER_3D(q1,r1,p1,p2,r2,q2,dp2,dr2,dq2)
           else TRI_TRI_INTER_3D(p1,q1,r1,p2,q2,r2,dp2,dq2,dr2)
         }
-        else if (dq1 > 0.0f) {
-          if (dr1 > 0.0f) TRI_TRI_INTER_3D(p1,q1,r1,p2,r2,q2,dp2,dr2,dq2)
+        else if (dq1 > TOL) {
+          if (dr1 > TOL) TRI_TRI_INTER_3D(p1,q1,r1,p2,r2,q2,dp2,dr2,dq2)
           else TRI_TRI_INTER_3D(q1,r1,p1,p2,q2,r2,dp2,dq2,dr2)
         }
         else  {
 
-          if (dr1 > 0.0f) TRI_TRI_INTER_3D(r1,p1,q1,p2,q2,r2,dp2,dq2,dr2)
-          else if (dr1 < 0.0f) TRI_TRI_INTER_3D(r1,p1,q1,p2,r2,q2,dp2,dr2,dq2)
+          if (dr1 > TOL) TRI_TRI_INTER_3D(r1,p1,q1,p2,q2,r2,dp2,dq2,dr2)
+          else if (-dr1 > -TOL) TRI_TRI_INTER_3D(r1,p1,q1,p2,r2,q2,dp2,dr2,dq2)
           else {
             // triangles are co-planar
             *coplanar = 1;
@@ -477,30 +479,30 @@ namespace OpenMEEG {
 
 
     #define INTERSECTION_TEST_VERTEX(P1, Q1, R1, P2, Q2, R2) {\
-      if (ORIENT_2D(R2,P2,Q1) >= 0.0f)\
-        if (ORIENT_2D(R2,Q2,Q1) <= 0.0f)\
-          if (ORIENT_2D(P1,P2,Q1) > 0.0f) {\
-            if (ORIENT_2D(P1,Q2,Q1) <= 0.0f) return 1; \
+      if (ORIENT_2D(R2,P2,Q1) >= TOL)\
+        if (ORIENT_2D(R2,Q2,Q1) <= TOL)\
+          if (ORIENT_2D(P1,P2,Q1) > TOL) {\
+            if (ORIENT_2D(P1,Q2,Q1) <= TOL) return 1; \
             else return 0;} else {\
-            if (ORIENT_2D(P1,P2,R1) >= 0.0f)\
-              if (ORIENT_2D(Q1,R1,P2) >= 0.0f) return 1; \
+            if (ORIENT_2D(P1,P2,R1) >= TOL)\
+              if (ORIENT_2D(Q1,R1,P2) >= TOL) return 1; \
               else return 0;\
             else return 0;}\
         else \
-          if (ORIENT_2D(P1,Q2,Q1) <= 0.0f)\
-            if (ORIENT_2D(R2,Q2,R1) <= 0.0f)\
-              if (ORIENT_2D(Q1,R1,Q2) >= 0.0f) return 1; \
+          if (ORIENT_2D(P1,Q2,Q1) <= TOL)\
+            if (ORIENT_2D(R2,Q2,R1) <= TOL)\
+              if (ORIENT_2D(Q1,R1,Q2) >= TOL) return 1; \
               else return 0;\
             else return 0;\
           else return 0;\
       else\
-        if (ORIENT_2D(R2,P2,R1) >= 0.0f) \
-          if (ORIENT_2D(Q1,R1,R2) >= 0.0f)\
-            if (ORIENT_2D(P1,P2,R1) >= 0.0f) return 1;\
+        if (ORIENT_2D(R2,P2,R1) >= TOL) \
+          if (ORIENT_2D(Q1,R1,R2) >= TOL)\
+            if (ORIENT_2D(P1,P2,R1) >= TOL) return 1;\
             else return 0;\
           else \
-            if (ORIENT_2D(Q1,R1,Q2) >= 0.0f) {\
-              if (ORIENT_2D(R2,R1,Q2) >= 0.0f) return 1; \
+            if (ORIENT_2D(Q1,R1,Q2) >= TOL) {\
+              if (ORIENT_2D(R2,R1,Q2) >= TOL) return 1; \
               else return 0; }\
             else return 0; \
         else  return 0; \
@@ -509,19 +511,19 @@ namespace OpenMEEG {
 
 
     #define INTERSECTION_TEST_EDGE(P1, Q1, R1, P2, Q2, R2) { \
-      if (ORIENT_2D(R2,P2,Q1) >= 0.0f) {\
-        if (ORIENT_2D(P1,P2,Q1) >= 0.0f) { \
-            if (ORIENT_2D(P1,Q1,R2) >= 0.0f) return 1; \
+      if (ORIENT_2D(R2,P2,Q1) >= TOL) {\
+        if (ORIENT_2D(P1,P2,Q1) >= TOL) { \
+            if (ORIENT_2D(P1,Q1,R2) >= TOL) return 1; \
             else return 0;} else { \
-          if (ORIENT_2D(Q1,R1,P2) >= 0.0f){ \
-            if (ORIENT_2D(R1,P1,P2) >= 0.0f) return 1; else return 0;} \
+          if (ORIENT_2D(Q1,R1,P2) >= TOL){ \
+            if (ORIENT_2D(R1,P1,P2) >= TOL) return 1; else return 0;} \
           else return 0; } \
       } else {\
-        if (ORIENT_2D(R2,P2,R1) >= 0.0f) {\
-          if (ORIENT_2D(P1,P2,R1) >= 0.0f) {\
-            if (ORIENT_2D(P1,R1,R2) >= 0.0f) return 1;  \
+        if (ORIENT_2D(R2,P2,R1) >= TOL) {\
+          if (ORIENT_2D(P1,P2,R1) >= TOL) {\
+            if (ORIENT_2D(P1,R1,R2) >= TOL) return 1;  \
             else {\
-              if (ORIENT_2D(Q1,R1,R2) >= 0.0f) return 1; else return 0;}}\
+              if (ORIENT_2D(Q1,R1,R2) >= TOL) return 1; else return 0;}}\
           else  return 0; }\
         else return 0; }}
 
@@ -529,16 +531,16 @@ namespace OpenMEEG {
 
     bool ccw_tri_tri_intersection_2d(double p1[2], double q1[2], double r1[2],
                                     double p2[2], double q2[2], double r2[2]) {
-      if ( ORIENT_2D(p2,q2,p1) >= 0.0f ) {
-        if ( ORIENT_2D(q2,r2,p1) >= 0.0f ) {
-          if ( ORIENT_2D(r2,p2,p1) >= 0.0f ) return 1;
+      if ( ORIENT_2D(p2,q2,p1) >= TOL ) {
+        if ( ORIENT_2D(q2,r2,p1) >= TOL ) {
+          if ( ORIENT_2D(r2,p2,p1) >= TOL ) return 1;
           else INTERSECTION_TEST_EDGE(p1,q1,r1,p2,q2,r2)
         } else {
-          if ( ORIENT_2D(r2,p2,p1) >= 0.0f ) INTERSECTION_TEST_EDGE(p1,q1,r1,r2,p2,q2)
+          if ( ORIENT_2D(r2,p2,p1) >= TOL ) INTERSECTION_TEST_EDGE(p1,q1,r1,r2,p2,q2)
           else INTERSECTION_TEST_VERTEX(p1,q1,r1,p2,q2,r2)}}
       else {
-        if ( ORIENT_2D(q2,r2,p1) >= 0.0f ) {
-          if ( ORIENT_2D(r2,p2,p1) >= 0.0f ) INTERSECTION_TEST_EDGE(p1,q1,r1,q2,r2,p2)
+        if ( ORIENT_2D(q2,r2,p1) >= TOL ) {
+          if ( ORIENT_2D(r2,p2,p1) >= TOL ) INTERSECTION_TEST_EDGE(p1,q1,r1,q2,r2,p2)
           else  INTERSECTION_TEST_VERTEX(p1,q1,r1,q2,r2,p2)}
         else INTERSECTION_TEST_VERTEX(p1,q1,r1,r2,p2,q2)}
     };
@@ -546,13 +548,13 @@ namespace OpenMEEG {
 
     bool tri_tri_overlap_test_2d(double p1[2], double q1[2], double r1[2],
                                 double p2[2], double q2[2], double r2[2]) {
-      if ( ORIENT_2D(p1,q1,r1) < 0.0f )
-        if ( ORIENT_2D(p2,q2,r2) < 0.0f )
+      if ( -ORIENT_2D(p1,q1,r1) > -TOL )
+        if ( -ORIENT_2D(p2,q2,r2) > -TOL )
           return ccw_tri_tri_intersection_2d(p1,r1,q1,p2,r2,q2);
         else
           return ccw_tri_tri_intersection_2d(p1,r1,q1,p2,q2,r2);
       else
-        if ( ORIENT_2D(p2,q2,r2) < 0.0f )
+        if ( -ORIENT_2D(p2,q2,r2) > -TOL )
           return ccw_tri_tri_intersection_2d(p1,q1,r1,p2,r2,q2);
         else
           return ccw_tri_tri_intersection_2d(p1,q1,r1,p2,q2,r2);

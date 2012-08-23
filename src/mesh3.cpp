@@ -936,20 +936,19 @@ namespace OpenMEEG {
     }
 
     bool Mesh::has_self_intersection() const {
-        bool selfIntersects = false;
         for(int i = 0; i < ntrgs; ++i) {
             const Triangle& T1 = triangle(i);
             for(int j = i+1; j < ntrgs; ++j) {
                 const Triangle& T2 = triangle(j);
                 if (!T1.contains(T2.s1()) && !T1.contains(T2.s2()) && !T1.contains(T2.s3())) {
                     if (triangle_intersection(*this, i, *this, j)) {
-                        selfIntersects = true;
                         std::cout << "triangles " << i << " and " << j << " are intersecting" <<std::endl;
+                        return true;
                     }
                 }
             }
         }
-        return selfIntersects;
+        return false;
     }
 
     bool Mesh::intersection(const Mesh& m) const {
