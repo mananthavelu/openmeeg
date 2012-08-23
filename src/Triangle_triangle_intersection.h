@@ -124,12 +124,12 @@ namespace OpenMEEG {
          if (dq2 > TOL) CHECK_MIN_MAX(p1,r1,q1,r2,p2,q2) \
          else if (dr2 > TOL) CHECK_MIN_MAX(p1,r1,q1,q2,r2,p2)\
          else CHECK_MIN_MAX(p1,q1,r1,p2,q2,r2) }\
-      else if (-dp2 > -TOL) { \
-        if (-dq2 > -TOL) CHECK_MIN_MAX(p1,q1,r1,r2,p2,q2)\
-        else if (-dr2 > -TOL) CHECK_MIN_MAX(p1,q1,r1,q2,r2,p2)\
+      else if (dp2 < -TOL) { \
+        if (dq2 < -TOL) CHECK_MIN_MAX(p1,q1,r1,r2,p2,q2)\
+        else if (dr2 < -TOL) CHECK_MIN_MAX(p1,q1,r1,q2,r2,p2)\
         else CHECK_MIN_MAX(p1,r1,q1,p2,q2,r2)\
       } else { \
-        if (-dq2 > -TOL) { \
+        if (dq2 < -TOL) { \
           if (dr2 >= TOL)  CHECK_MIN_MAX(p1,r1,q1,q2,r2,p2)\
           else CHECK_MIN_MAX(p1,q1,r1,p2,q2,r2)\
         } \
@@ -139,7 +139,7 @@ namespace OpenMEEG {
         } \
         else  { \
           if (dr2 > TOL) CHECK_MIN_MAX(p1,q1,r1,r2,p2,q2)\
-          else if (-dr2 > -TOL) CHECK_MIN_MAX(p1,r1,q1,r2,p2,q2)\
+          else if (dr2 < -TOL) CHECK_MIN_MAX(p1,r1,q1,r2,p2,q2)\
           else return coplanar_tri_tri3d(p1,q1,r1,p2,q2,r2,N1,N2);\
          }}}
 
@@ -290,7 +290,7 @@ namespace OpenMEEG {
       if (DOT(v,N) > TOL) {\
         SUB(v1,r1,p1) \
         CROSS(N,v1,v2) \
-        if (DOT(v,N) <= TOL) { \
+        if (DOT(v,N) <= -TOL) { \
           SUB(v2,q2,p1) \
           CROSS(N,v1,v2) \
           if (DOT(v,N) > TOL) { \
@@ -324,7 +324,7 @@ namespace OpenMEEG {
       } else { \
         SUB(v2,q2,p1) \
         CROSS(N,v1,v2) \
-        if (-DOT(v,N) < -TOL) { \
+        if (DOT(v,N) < -TOL) { \
           return 0; \
         } else { \
           SUB(v1,r1,p1) \
@@ -362,12 +362,12 @@ namespace OpenMEEG {
          if (dq2 > TOL) CONSTRUCT_INTERSECTION(p1,r1,q1,r2,p2,q2) \
          else if (dr2 > TOL) CONSTRUCT_INTERSECTION(p1,r1,q1,q2,r2,p2)\
          else CONSTRUCT_INTERSECTION(p1,q1,r1,p2,q2,r2) }\
-      else if (-dp2 > -TOL) { \
-        if (-dq2 > -TOL) CONSTRUCT_INTERSECTION(p1,q1,r1,r2,p2,q2)\
-        else if (-dr2 > -TOL) CONSTRUCT_INTERSECTION(p1,q1,r1,q2,r2,p2)\
+      else if (dp2 < -TOL) { \
+        if (dq2 < -TOL) CONSTRUCT_INTERSECTION(p1,q1,r1,r2,p2,q2)\
+        else if (dr2 < -TOL) CONSTRUCT_INTERSECTION(p1,q1,r1,q2,r2,p2)\
         else CONSTRUCT_INTERSECTION(p1,r1,q1,p2,q2,r2)\
       } else { \
-        if (-dq2 > -TOL) { \
+        if (dq2 < -TOL) { \
           if (dr2 >= TOL)  CONSTRUCT_INTERSECTION(p1,r1,q1,q2,r2,p2)\
           else CONSTRUCT_INTERSECTION(p1,q1,r1,p2,q2,r2)\
         } \
@@ -377,7 +377,7 @@ namespace OpenMEEG {
         } \
         else  { \
           if (dr2 > TOL) CONSTRUCT_INTERSECTION(p1,q1,r1,r2,p2,q2)\
-          else if (-dr2 > -TOL) CONSTRUCT_INTERSECTION(p1,r1,q1,r2,p2,q2)\
+          else if (dr2 < -TOL) CONSTRUCT_INTERSECTION(p1,r1,q1,r2,p2,q2)\
           else { \
             *coplanar = 1; \
             return coplanar_tri_tri3d(p1,q1,r1,p2,q2,r2,N1,N2);\
@@ -436,12 +436,12 @@ namespace OpenMEEG {
         if (dq1 > TOL) TRI_TRI_INTER_3D(r1,p1,q1,p2,r2,q2,dp2,dr2,dq2)
         else if (dr1 > TOL) TRI_TRI_INTER_3D(q1,r1,p1,p2,r2,q2,dp2,dr2,dq2)
         else TRI_TRI_INTER_3D(p1,q1,r1,p2,q2,r2,dp2,dq2,dr2)
-      } else if (-dp1 > -TOL) {
-        if (-dq1 > -TOL) TRI_TRI_INTER_3D(r1,p1,q1,p2,q2,r2,dp2,dq2,dr2)
-        else if (-dr1 > -TOL) TRI_TRI_INTER_3D(q1,r1,p1,p2,q2,r2,dp2,dq2,dr2)
+      } else if (dp1 < -TOL) {
+        if (dq1 < -TOL) TRI_TRI_INTER_3D(r1,p1,q1,p2,q2,r2,dp2,dq2,dr2)
+        else if (dr1 < -TOL) TRI_TRI_INTER_3D(q1,r1,p1,p2,q2,r2,dp2,dq2,dr2)
         else TRI_TRI_INTER_3D(p1,q1,r1,p2,r2,q2,dp2,dr2,dq2)
       } else {
-        if (-dq1 > -TOL) {
+        if (dq1 < -TOL) {
           if (dr1 >= TOL) TRI_TRI_INTER_3D(q1,r1,p1,p2,r2,q2,dp2,dr2,dq2)
           else TRI_TRI_INTER_3D(p1,q1,r1,p2,q2,r2,dp2,dq2,dr2)
         }
@@ -452,7 +452,7 @@ namespace OpenMEEG {
         else  {
 
           if (dr1 > TOL) TRI_TRI_INTER_3D(r1,p1,q1,p2,q2,r2,dp2,dq2,dr2)
-          else if (-dr1 > -TOL) TRI_TRI_INTER_3D(r1,p1,q1,p2,r2,q2,dp2,dr2,dq2)
+          else if (dr1 < -TOL) TRI_TRI_INTER_3D(r1,p1,q1,p2,r2,q2,dp2,dr2,dq2)
           else {
             // triangles are co-planar
             *coplanar = 1;
@@ -480,17 +480,17 @@ namespace OpenMEEG {
 
     #define INTERSECTION_TEST_VERTEX(P1, Q1, R1, P2, Q2, R2) {\
       if (ORIENT_2D(R2,P2,Q1) >= TOL)\
-        if (ORIENT_2D(R2,Q2,Q1) <= TOL)\
+        if (ORIENT_2D(R2,Q2,Q1) <= -TOL)\
           if (ORIENT_2D(P1,P2,Q1) > TOL) {\
-            if (ORIENT_2D(P1,Q2,Q1) <= TOL) return 1; \
+            if (ORIENT_2D(P1,Q2,Q1) <= -TOL) return 1; \
             else return 0;} else {\
             if (ORIENT_2D(P1,P2,R1) >= TOL)\
               if (ORIENT_2D(Q1,R1,P2) >= TOL) return 1; \
               else return 0;\
             else return 0;}\
         else \
-          if (ORIENT_2D(P1,Q2,Q1) <= TOL)\
-            if (ORIENT_2D(R2,Q2,R1) <= TOL)\
+          if (ORIENT_2D(P1,Q2,Q1) <= -TOL)\
+            if (ORIENT_2D(R2,Q2,R1) <= -TOL)\
               if (ORIENT_2D(Q1,R1,Q2) >= TOL) return 1; \
               else return 0;\
             else return 0;\
@@ -548,13 +548,13 @@ namespace OpenMEEG {
 
     bool tri_tri_overlap_test_2d(double p1[2], double q1[2], double r1[2],
                                 double p2[2], double q2[2], double r2[2]) {
-      if ( -ORIENT_2D(p1,q1,r1) > -TOL )
-        if ( -ORIENT_2D(p2,q2,r2) > -TOL )
+      if ( ORIENT_2D(p1,q1,r1) < -TOL )
+        if ( ORIENT_2D(p2,q2,r2) < -TOL )
           return ccw_tri_tri_intersection_2d(p1,r1,q1,p2,r2,q2);
         else
           return ccw_tri_tri_intersection_2d(p1,r1,q1,p2,q2,r2);
       else
-        if ( -ORIENT_2D(p2,q2,r2) > -TOL )
+        if ( ORIENT_2D(p2,q2,r2) < -TOL )
           return ccw_tri_tri_intersection_2d(p1,q1,r1,p2,r2,q2);
         else
           return ccw_tri_tri_intersection_2d(p1,q1,r1,p2,q2,r2);
