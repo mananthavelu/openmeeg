@@ -177,9 +177,8 @@ Supported Blas-Lapack Implementations
 Using OpenMEEG
 --------------
 
-Have a look into data/README.rst for defining your geometry.
-and/or
-specify to cmake "-DBUILD_TUTORIALS=ON", and read the tutorials in pdf.
+Have a look into the `tutorial <https://openmeeg.github.io/tutorial.html>`_
+for more info and for defining your geometry.
 
 CeCILL-B full license
 ---------------------

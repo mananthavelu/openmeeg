@@ -13,7 +13,6 @@ set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithD
 option(BUILD_TOOLS "Build tools" ON)
 option(BUILD_TESTING "Build the testing tree" ON)
 option(BUILD_DOCUMENTATION "Build the Doxygen documentation" OFF)
-option(BUILD_TUTORIALS "Build Tutorials" OFF)
 option(ENABLE_PYTHON "Enable Python wrapping" OFF)
 option(ENABLE_COVERAGE "Enable Coverage" OFF)
 
